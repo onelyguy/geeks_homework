@@ -22,7 +22,7 @@ const tabsContentCards = document.querySelectorAll('.tab_content_block');
 const tabsItems = document.querySelectorAll('.tab_content_item');
 const tabsItemsParent = document.querySelector('.tab_content_items');
 // added
-let index = 0;
+let currentIndex = 0;
 
 const hideTabsContentCards = () => {
     tabsContentCards.forEach((tabContentCard) => {
@@ -41,12 +41,12 @@ const showTabsContentCards = (indexElement = 0) => {
 // added
 const autoTabSlider = () => {
     hideTabsContentCards();
-    index = (index + 1) % tabsContentCards.length;
-    showTabsContentCards(index);
+    currentIndex = (currentIndex + 1) % tabsContentCards.length;
+    showTabsContentCards(currentIndex);
 }
 
 hideTabsContentCards();
-showTabsContentCards(index);
+showTabsContentCards(currentIndex);
 
 tabsItemsParent.onclick = (event) => {
     if (event.target.classList.contains('tab_content_item')) {
@@ -54,7 +54,7 @@ tabsItemsParent.onclick = (event) => {
             if (event.target === tabItem) {
                 hideTabsContentCards();
                 // added
-                index = tabItemIndex;
+                currentIndex = tabItemIndex;
                 showTabsContentCards(tabItemIndex);
             }
         })
@@ -62,3 +62,48 @@ tabsItemsParent.onclick = (event) => {
 }
 
 setInterval(autoTabSlider, 3000);
+
+// CONVERTER
+
+const somInput = document.querySelector('#som');
+const usdInput = document.querySelector('#usd');
+const eurInput = document.querySelector('#eur');
+
+const converter = (element, targetElement, targetElement2, type) => {
+    element.oninput = () => {
+        request = new XMLHttpRequest();
+        request.open('GET', '../data/converter.json');
+        request.setRequestHeader('Content-type', 'application/json');
+        request.send();
+
+        request.onload = () => {
+            const data = JSON.parse(request.response);
+            switch (type) {
+                case 'som':
+                    targetElement.value = (element.value / data.usd).toFixed(2);
+                    targetElement2.value = (element.value / data.eur).toFixed(2);
+                    break;
+                case 'usd':
+                    targetElement.value = (element.value * data.usd).toFixed(2);
+                    targetElement2.value = (element.value / data.eur * data.usd).toFixed(2);
+                    break;
+                case 'eur':
+                    targetElement.value = (element.value * data.eur).toFixed(2);
+                    targetElement2.value = (element.value / data.usd * data.eur).toFixed(2);
+                    break;
+                default:
+                    break;
+            }
+
+            if (element.value === '') {
+                targetElement.value = '';
+                targetElement2.value = '';
+            }
+        }
+    }
+}
+
+converter(somInput, usdInput, eurInput, 'som');
+converter(usdInput, somInput, eurInput,'usd');
+converter(eurInput, somInput, usdInput, 'eur');
+
