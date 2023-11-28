@@ -65,9 +65,9 @@ setInterval(autoTabSlider, 3000);
 
 // CONVERTER
 
-const somInput = document.querySelector('#som');
-const usdInput = document.querySelector('#usd');
-const eurInput = document.querySelector('#eur');
+const somInput = document.querySelector('#som'),
+    usdInput = document.querySelector('#usd'),
+    eurInput = document.querySelector('#eur');
 
 const converter = (element, targetElement, targetElement2, type) => {
     element.oninput = () => {
@@ -107,3 +107,50 @@ converter(somInput, usdInput, eurInput, 'som');
 converter(usdInput, somInput, eurInput,'usd');
 converter(eurInput, somInput, usdInput, 'eur');
 
+// CARD SWITCHER
+
+// HOMEWORK 6
+
+// TASK 1
+
+const card = document.querySelector('.card'),
+    btnPrev = document.querySelector('#btn-prev'),
+    btnNext = document.querySelector('#btn-next');
+
+let count = 1;
+
+const fetchRequest = () => {
+    fetch(`https://jsonplaceholder.typicode.com/todos/${count}`)
+        .then(response => response.json())
+        .then(data => {
+            card.innerHTML = `
+                <p>${data.title}</p>
+                <p style="color: ${data.completed ? 'green' : 'red'}">${data.completed}</p>
+                <span>${data.id}</span>
+            `;
+        });
+};
+
+btnNext.onclick = () => {
+    count++;
+    if (count > 200) {
+        count = 1;
+    }
+    fetchRequest();
+};
+
+btnPrev.onclick = () => {
+    count--;
+    if (count < 1) {
+        count = 200;
+    }
+    fetchRequest();
+};
+
+fetchRequest();
+
+// TASK 2
+
+fetch('https://jsonplaceholder.typicode.com/posts')
+    .then((response) => response.json())
+    .then((data) => console.log(data))
