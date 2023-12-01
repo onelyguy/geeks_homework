@@ -1,8 +1,8 @@
 // PHONE CHECKER
 
-const phoneInput = document.querySelector('#phone_input');
-const phoneButton = document.querySelector('#phone_button');
-const phoneSpan = document.querySelector('#phone_result');
+const phoneInput = document.querySelector('#phone_input'),
+    phoneButton = document.querySelector('#phone_button'),
+    phoneSpan = document.querySelector('#phone_result');
 
 const regExp = /^\+996 [2579]\d{2} \d{2}-\d{2}-\d{2}$/
 
@@ -18,10 +18,9 @@ phoneButton.addEventListener('click', () => {
 
 // TAB SLIDER
 
-const tabsContentCards = document.querySelectorAll('.tab_content_block');
-const tabsItems = document.querySelectorAll('.tab_content_item');
-const tabsItemsParent = document.querySelector('.tab_content_items');
-// added
+const tabsContentCards = document.querySelectorAll('.tab_content_block'),
+    tabsItems = document.querySelectorAll('.tab_content_item'),
+    tabsItemsParent = document.querySelector('.tab_content_items');
 let currentIndex = 0;
 
 const hideTabsContentCards = () => {
@@ -29,21 +28,20 @@ const hideTabsContentCards = () => {
         tabContentCard.style.display = 'none';
     })
     tabsItems.forEach((tabItem) => {
-        tabItem.classList.remove('tab_content_item_active')
+        tabItem.classList.remove('tab_content_item_active');
     })
-}
+};
 
 const showTabsContentCards = (indexElement = 0) => {
-    tabsContentCards[indexElement].style.display = 'block'
-    tabsItems[indexElement].classList.add('tab_content_item_active')
-}
+    tabsContentCards[indexElement].style.display = 'block';
+    tabsItems[indexElement].classList.add('tab_content_item_active');
+};
 
-// added
 const autoTabSlider = () => {
     hideTabsContentCards();
     currentIndex = (currentIndex + 1) % tabsContentCards.length;
     showTabsContentCards(currentIndex);
-}
+};
 
 hideTabsContentCards();
 showTabsContentCards(currentIndex);
@@ -53,13 +51,12 @@ tabsItemsParent.onclick = (event) => {
         tabsItems.forEach((tabItem, tabItemIndex ) => {
             if (event.target === tabItem) {
                 hideTabsContentCards();
-                // added
                 currentIndex = tabItemIndex;
                 showTabsContentCards(tabItemIndex);
             }
         })
     }
-}
+};
 
 setInterval(autoTabSlider, 3000);
 
@@ -70,14 +67,11 @@ const somInput = document.querySelector('#som'),
     eurInput = document.querySelector('#eur');
 
 const converter = (element, targetElement, targetElement2, type) => {
-    element.oninput = () => {
-        request = new XMLHttpRequest();
-        request.open('GET', '../data/converter.json');
-        request.setRequestHeader('Content-type', 'application/json');
-        request.send();
+    element.oninput = async () => {
+        try {
+            const response = await fetch('../data/converter.json');
+            const data = await response.json();
 
-        request.onload = () => {
-            const data = JSON.parse(request.response);
             switch (type) {
                 case 'som':
                     targetElement.value = (element.value / data.usd).toFixed(2);
@@ -94,14 +88,16 @@ const converter = (element, targetElement, targetElement2, type) => {
                 default:
                     break;
             }
-
             if (element.value === '') {
                 targetElement.value = '';
                 targetElement2.value = '';
             }
+
+        } catch (e) {
+            console.log(e);
         }
-    }
-}
+    };
+};
 
 converter(somInput, usdInput, eurInput, 'som');
 converter(usdInput, somInput, eurInput,'usd');
@@ -109,26 +105,24 @@ converter(eurInput, somInput, usdInput, 'eur');
 
 // CARD SWITCHER
 
-// HOMEWORK 6
-
-// TASK 1
-
 const card = document.querySelector('.card'),
     btnPrev = document.querySelector('#btn-prev'),
     btnNext = document.querySelector('#btn-next');
 
 let count = 1;
 
-const fetchRequest = () => {
-    fetch(`https://jsonplaceholder.typicode.com/todos/${count}`)
-        .then(response => response.json())
-        .then(data => {
-            card.innerHTML = `
-                <p>${data.title}</p>
-                <p style="color: ${data.completed ? 'green' : 'red'}">${data.completed}</p>
-                <span>${data.id}</span>
-            `;
-        });
+const fetchRequest = async () => {
+    try {
+        const response = await fetch(`https://jsonplaceholder.typicode.com/todos/${count}`);
+        const data = await response.json();
+        card.innerHTML = `
+            <p>${data.title}</p>
+            <p style="color: ${data.completed ? 'green' : 'red'}">${data.completed}</p>
+            <span>${data.id}</span>
+        `;
+    } catch (e) {
+        console.log(e);
+    }
 };
 
 btnNext.onclick = () => {
@@ -149,8 +143,22 @@ btnPrev.onclick = () => {
 
 fetchRequest();
 
-// TASK 2
+// SEARCH WEATHER
 
-fetch('https://jsonplaceholder.typicode.com/posts')
-    .then((response) => response.json())
-    .then((data) => console.log(data))
+const cityNameInput = document.querySelector('.cityName'),
+    city = document.querySelector('.city'),
+    temp = document.querySelector('.temp');
+
+const WEATHER_API = 'http://api.openweathermap.org/data/2.5/weather',
+    API_KEY = 'e417df62e04d3b1b111abeab19cea714';
+
+cityNameInput.oninput = async (event) => {
+    try {
+        const response = await fetch(`${WEATHER_API}?q=${event.target.value}&appid=${API_KEY}`);
+        const data = await response.json();
+        city.innerHTML = data?.name ? data?.name : 'Город не найден';
+        temp.innerHTML = data?.main?.temp ? Math.round(data?.main?.temp - 273) + '&deg;C' : '';
+    } catch (e) {
+        console.log(e);
+    }
+};
