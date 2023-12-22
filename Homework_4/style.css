@@ -1,0 +1,86 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+.wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 10px;
+}
+.personCard {
+    display: flex;
+    flex-direction: column;
+    width: 478px;
+    -webkit-border-radius: 5px 5px 0 0;
+    -moz-border-radius: 5px 5px 0 0;
+    border-radius: 9px 9px 0 0;
+    background: var(--grey);
+    border: 1px solid grey;
+}
+.upper_left {
+    display: inline-block;
+}
+.upper_right {
+    float: right;
+}
+h2 {
+    margin: 4px;
+    font-size: 15px;
+}
+.inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.left {
+    width: 55%;
+}
+.img-container {
+    margin: 10px;
+}
+.photo {
+    float: right;
+    width: 197px;
+}
+.row {
+    display: flex;
+    align-items: center;
+}
+.info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: black;
+    color: white;
+    border: 1px solid var(--grey);
+    width: 130px;
+    height: 38.4px;
+    text-align: center;
+}
+span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    background: white;
+    height: 38.4px;
+    border: 1px solid var(--grey);
+}
+.comments {
+    padding: 5px;
+    height: 226px;
+    background: white;
+    text-align: justify;
+}
+.notes {
+    padding: 5px;
+    height: 115px;
+    background: white;
+}
+
+:root {
+    --grey: rgb(128 128 128 / 49%);
+}
+
